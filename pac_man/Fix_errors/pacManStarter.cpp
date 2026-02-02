@@ -28,7 +28,6 @@ int main()
 	sf::Time timePerFrame = sf::seconds(1.0f / 60.0f);
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	sf::Clock frameClock;
-	frameClock.restart();
 
 	sf::Clock vulnerabilityClock;
 	float vulnerabilityDuration = 5.0f;
@@ -58,19 +57,17 @@ int main()
 	restartText.setString("Press 'SPACE' to restart");
 	restartText.setFillColor(sf::Color::White);
 	restartText.setOrigin(restartText.getLocalBounds().size / 2.0f);
-	restartText.setPosition(sf::Vector2f(gameOverText.getPosition().x, gameOverText.getPosition().y + 30.0f));
+	restartText.setPosition(sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f + 80.0f));
 
 	sf::Text scoreText(gameFont);
 	scoreText.setString("Score: " + std::to_string(score));
 	scoreText.setFillColor(sf::Color::White);
-	scoreText.setOrigin(scoreText.getLocalBounds().size / 2.0f);
-	scoreText.setPosition(sf::Vector2f(500.0f, 25.0f));
+	scoreText.setPosition(sf::Vector2f(450.0f, 10.0f));
 
 	sf::Text highScoreText(gameFont);
 	highScoreText.setString("High Score: " + std::to_string(highScore));
 	highScoreText.setFillColor(sf::Color::White);
-	highScoreText.setOrigin(highScoreText.getLocalBounds().size / 2.0f);
-	highScoreText.setPosition(sf::Vector2f(100.0f, 25.0f));
+	highScoreText.setPosition(sf::Vector2f(10.0f, 10.0f));
 
 	sf::Sprite pacmanSprite(pacmanTexture);
 	pacmanSprite.setTextureRect(sf::IntRect({ 0, 0 }, { 32, 32 }));
@@ -80,57 +77,44 @@ int main()
 	float pacmanY = GAMEPLAY_Y;
 	float pacmanSpeed = 2.0f;
 	bool spaceWasPressed = false;
-	int pacmanFrameRate = 10;
 	int pacmanTotalFrames = 3;
 	int pacmanCurrentFrame = 0;
 	int pacmanFrameCounter = 0;
-	int pacmanFrameWidth = 32;
-	int pacmanFrameHeight = 32;
 
 	sf::RectangleShape ghostRect;
-	float ghostWidth = 30.0f;
-	float ghostHeight = 30.0f;
-	ghostRect.setSize(sf::Vector2f(ghostWidth, ghostHeight));
+	ghostRect.setSize(sf::Vector2f(30.0f, 30.0f));
 	ghostRect.setFillColor(sf::Color::Red);
-
 	float ghostX = 550.0f;
 	float ghostY = GAMEPLAY_Y - 15.0f;
-	float ghostSpeedNormal = 2.2f;
-	float ghostSpeedVulnerable = 1.0f;
+	float ghostSpeed = 2.0f;
 
 	srand(time(NULL));
 
 	const int TOTAL_PELLETS = 10;
-	const float PELLET_SPACING = 50.0f;
 	sf::CircleShape pellets[TOTAL_PELLETS];
-
 	for (int i = 0; i < TOTAL_PELLETS; i++)
 	{
 		pellets[i].setFillColor(sf::Color::Yellow);
 		pellets[i].setRadius(10.0f);
 		pellets[i].setOrigin(sf::Vector2f(10.0f, 10.0f));
-		pellets[i].setPosition(sf::Vector2f(30.0f + PELLET_SPACING * i, GAMEPLAY_Y));
+		pellets[i].setPosition(sf::Vector2f(30.0f + 50.0f * i, GAMEPLAY_Y));
 	}
 
 	sf::CircleShape powerPellet;
 	powerPellet.setFillColor(sf::Color::Yellow);
 	powerPellet.setRadius(18.0f);
 	powerPellet.setOrigin(sf::Vector2f(18.0f, 18.0f));
-	powerPellet.setPosition(sf::Vector2f(30.0f + PELLET_SPACING * TOTAL_PELLETS, GAMEPLAY_Y));
+	powerPellet.setPosition(sf::Vector2f(550.0f, GAMEPLAY_Y));
 
 	while (window.isOpen())
 	{
 		while (const std::optional event = window.pollEvent())
 		{
 			if (event->is<sf::Event::Closed>())
-			{
 				window.close();
-			}
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
-			{
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
 					window.close();
-			}
 		}
 
 		timeSinceLastUpdate += frameClock.restart();
@@ -148,63 +132,25 @@ int main()
 					score = 0;
 					pacmanX = 50.0f;
 					pacmanSpeed = 2.0f;
-
-					if (pacmanX > SCREEN_WIDTH / 2.0f)
-					{
-						ghostX = 50.0f;
-					}
-					else
-					{
-						ghostX = SCREEN_WIDTH - ghostWidth - 20.0f;
-					}
-
-					scoreText.setString("Score: " + std::to_string(score));
-					scoreText.setOrigin(scoreText.getLocalBounds().size / 2.0f);
-
-					highScoreText.setString("High Score: " + std::to_string(highScore));
-					highScoreText.setOrigin(highScoreText.getLocalBounds().size / 2.0f);
-
-					for (int i = 0; i < TOTAL_PELLETS; i++)
-					{
-						pellets[i].setPosition(sf::Vector2f(30.0f + PELLET_SPACING * i, GAMEPLAY_Y));
-					}
-
-					powerPellet.setPosition(sf::Vector2f(30.0f + PELLET_SPACING * TOTAL_PELLETS, GAMEPLAY_Y));
+					ghostX = 550.0f;
 					ghostRect.setFillColor(sf::Color::Red);
+					scoreText.setString("Score: " + std::to_string(score));
+					highScoreText.setString("High Score: " + std::to_string(highScore));
+					for (int i = 0; i < TOTAL_PELLETS; i++)
+						pellets[i].setPosition(sf::Vector2f(30.0f + 50.0f * i, GAMEPLAY_Y));
+					powerPellet.setPosition(sf::Vector2f(550.0f, GAMEPLAY_Y));
 				}
 			}
 			else
 			{
-				if (pacmanFrameCounter >= 60 / pacmanFrameRate)
+				pacmanFrameCounter++;
+				if (pacmanFrameCounter >= 6)
 				{
-					if (pacmanCurrentFrame < pacmanTotalFrames - 1)
-					{
-						pacmanCurrentFrame++;
-					}
-					else
-					{
-						pacmanCurrentFrame = 0;
-					}
+					pacmanCurrentFrame = (pacmanCurrentFrame + 1) % pacmanTotalFrames;
 					pacmanFrameCounter = 0;
 				}
-				else
-				{
-					pacmanFrameCounter++;
-				}
-
-				int textureLeft = pacmanCurrentFrame * pacmanFrameWidth;
-				int textureTop = 0;
-				pacmanSprite.setTextureRect(sf::IntRect({ textureLeft, textureTop }, { pacmanFrameWidth, pacmanFrameHeight }));
-				pacmanSprite.setOrigin(sf::Vector2f(16, 16));
-
-				if (pacmanSpeed < 0)
-				{
-					pacmanSprite.setScale(sf::Vector2f(-1, 1));
-				}
-				else
-				{
-					pacmanSprite.setScale(sf::Vector2f(1, 1));
-				}
+				pacmanSprite.setTextureRect(sf::IntRect({ pacmanCurrentFrame * 32, 0 }, { 32, 32 }));
+				pacmanSprite.setScale(sf::Vector2f(pacmanSpeed > 0 ? 1.0f : -1.0f, 1.0f));
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space))
 				{
@@ -215,9 +161,12 @@ int main()
 					}
 				}
 				else
-				{
 					spaceWasPressed = false;
-				}
+
+				pacmanX += pacmanSpeed;
+				if (pacmanX < -16.0f) pacmanX = SCREEN_WIDTH + 16.0f;
+				if (pacmanX > SCREEN_WIDTH + 16.0f) pacmanX = -16.0f;
+				pacmanSprite.setPosition(sf::Vector2f(pacmanX, pacmanY));
 
 				ghostRect.setPosition(sf::Vector2f(ghostX, ghostY));
 
@@ -228,162 +177,81 @@ int main()
 						isGhostVulnerable = false;
 						ghostRect.setFillColor(sf::Color::Red);
 					}
+					if (pacmanX < ghostX) ghostX += 1.0f;
+					else ghostX -= 1.0f;
 				}
+				else
+				{
+					if (pacmanX < ghostX) ghostX -= ghostSpeed;
+					else ghostX += ghostSpeed;
+				}
+
+				if (ghostX < 0.0f) ghostX = 0.0f;
+				if (ghostX > SCREEN_WIDTH - 30.0f) ghostX = SCREEN_WIDTH - 30.0f;
 
 				for (int i = 0; i < TOTAL_PELLETS; i++)
 				{
 					if (pacmanSprite.getGlobalBounds().findIntersection(pellets[i].getGlobalBounds()))
 					{
-						pellets[i].setPosition(sf::Vector2f(1000, 1000));
+						pellets[i].setPosition(sf::Vector2f(1000.0f, 1000.0f));
 						score += 100;
 						scoreText.setString("Score: " + std::to_string(score));
-						scoreText.setOrigin(scoreText.getLocalBounds().size / 2.0f);
 					}
 				}
 
 				if (pacmanSprite.getGlobalBounds().findIntersection(powerPellet.getGlobalBounds()))
 				{
-					powerPellet.setPosition(sf::Vector2f(1000, 1000));
+					powerPellet.setPosition(sf::Vector2f(1000.0f, 1000.0f));
 					isGhostVulnerable = true;
 					vulnerabilityClock.restart();
 					ghostRect.setFillColor(sf::Color::Blue);
 					score += 500;
 					scoreText.setString("Score: " + std::to_string(score));
-					scoreText.setOrigin(scoreText.getLocalBounds().size / 2.0f);
 				}
 
 				if (pacmanSprite.getGlobalBounds().findIntersection(ghostRect.getGlobalBounds()))
 				{
 					if (isGhostVulnerable)
 					{
-						if (pacmanX > SCREEN_WIDTH / 2.0f)
-						{
-							ghostX = 50.0f;
-						}
-						else
-						{
-							ghostX = SCREEN_WIDTH - ghostWidth - 20.0f;
-						}
-
+						ghostX = 550.0f;
 						score += 500;
 						scoreText.setString("Score: " + std::to_string(score));
-						scoreText.setOrigin(scoreText.getLocalBounds().size / 2.0f);
 						isGhostVulnerable = false;
 						ghostRect.setFillColor(sf::Color::Red);
 					}
 					else
 					{
 						isGameOver = true;
-						if (highScore < score)
-						{
-							highScore = score;
-						}
+						if (score > highScore) highScore = score;
 					}
 				}
 
-				pacmanX += pacmanSpeed;
-
-				if (pacmanX < -16.0f)
-				{
-					pacmanX = SCREEN_WIDTH + 16.0f;
-				}
-				else if (pacmanX > SCREEN_WIDTH + 16.0f)
-				{
-					pacmanX = -16.0f;
-				}
-
-				pacmanSprite.setPosition(sf::Vector2f(pacmanX, pacmanY));
-
-				float currentGhostSpeed = isGhostVulnerable ? ghostSpeedVulnerable : ghostSpeedNormal;
-
-				if (isGhostVulnerable)
-				{
-					if (pacmanSprite.getPosition().x < ghostRect.getPosition().x)
-					{
-						ghostX += currentGhostSpeed;
-					}
-					else if (pacmanSprite.getPosition().x > ghostRect.getPosition().x)
-					{
-						ghostX -= currentGhostSpeed;
-					}
-				}
-				else
-				{
-					if (pacmanSprite.getPosition().x < ghostRect.getPosition().x)
-					{
-						ghostX -= currentGhostSpeed;
-					}
-					else if (pacmanSprite.getPosition().x > ghostRect.getPosition().x)
-					{
-						ghostX += currentGhostSpeed;
-					}
-				}
-
-				if (ghostX < 0.0f)
-				{
-					ghostX = 0.0f;
-				}
-				else if (ghostX > SCREEN_WIDTH - ghostWidth)
-				{
-					ghostX = SCREEN_WIDTH - ghostWidth;
-				}
-
-				bool allPelletsEaten = true;
+				bool allEaten = true;
 				for (int i = 0; i < TOTAL_PELLETS; i++)
+					if (pellets[i].getPosition().x < 900.0f) allEaten = false;
+				if (allEaten && powerPellet.getPosition().x > 900.0f)
 				{
-					if (pellets[i].getPosition().x < 900)
-					{
-						allPelletsEaten = false;
-						break;
-					}
-				}
-
-				bool powerPelletEaten = (powerPellet.getPosition().x > 900);
-
-				if (allPelletsEaten && powerPelletEaten)
-				{
-					int randomOffset = rand() % 100;
 					for (int i = 0; i < TOTAL_PELLETS; i++)
-					{
-						float xPos = 30.0f + PELLET_SPACING * i + randomOffset;
-						if (xPos > SCREEN_WIDTH - 30.0f)
-						{
-							xPos -= SCREEN_WIDTH;
-						}
-						pellets[i].setPosition(sf::Vector2f(xPos, GAMEPLAY_Y));
-					}
-
-					float powerX = 30.0f + PELLET_SPACING * TOTAL_PELLETS + randomOffset;
-					if (powerX > SCREEN_WIDTH - 30.0f)
-					{
-						powerX -= SCREEN_WIDTH;
-					}
-					powerPellet.setPosition(sf::Vector2f(powerX, GAMEPLAY_Y));
+						pellets[i].setPosition(sf::Vector2f(30.0f + 50.0f * i, GAMEPLAY_Y));
+					powerPellet.setPosition(sf::Vector2f(550.0f, GAMEPLAY_Y));
 				}
 			}
 
 			window.clear();
-
 			for (int i = 0; i < TOTAL_PELLETS; i++)
-			{
 				window.draw(pellets[i]);
-			}
-
 			window.draw(powerPellet);
 			window.draw(ghostRect);
 			window.draw(pacmanSprite);
 			window.draw(scoreText);
 			window.draw(highScoreText);
-
 			if (isGameOver)
 			{
 				window.draw(gameOverText);
 				window.draw(restartText);
 			}
-
 			window.display();
 		}
 	}
-
 	return 0;
 }
