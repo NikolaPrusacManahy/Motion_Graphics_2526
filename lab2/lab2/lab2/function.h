@@ -3,20 +3,57 @@
 
 bool isLeapYear(int year)
 {
-	return true;
+	if (year % 4 == 0)
+	{
+		if (year % 100 == 0)
+		{
+			if (year % 400 == 0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return true;
+		}
+	}
+	else
+	{
+		return false;
+	}
 }
 
 int Reversed(int testNumber)
 {
-	return 0;
+	int reversed = 0;
+	while (testNumber > 0)
+	{
+		reversed = reversed * 10 + testNumber % 10;
+		testNumber = testNumber / 10;
+	}
+	return reversed;
 }
 bool isAPalindrome(int testNumber)
 {
-	return false;
+	return testNumber == Reversed(testNumber);
 }
 bool isAPrimeNumber(int numbertoTest)
 {
+	if (numbertoTest <= 1)
 	return false;
+
+	for (int index = 2; index <= numbertoTest; index++)
+	{
+		if (numbertoTest % index == 0)
+		{
+			return false;
+		}
+		return true;
+	}
 }
 int input5CharsConvertToInt()
 {
@@ -33,7 +70,17 @@ int input5CharsConvertToInt()
 }
 int convertBinarytoDecimal(int binaryNumber)
 {
-	return 0;
+	int decimal = 0;
+	int base = 1;
+
+	while (binaryNumber > 0)
+	{
+		int lastDigit = binaryNumber % 10;
+		decimal = decimal + lastDigit * base;
+		base = base * 2;
+		binaryNumber = binaryNumber / 10;
+	}
+	return decimal;
 }
 void drawRightAngledTriangle()
 {
