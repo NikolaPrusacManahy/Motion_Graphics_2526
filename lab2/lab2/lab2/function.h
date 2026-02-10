@@ -1,3 +1,6 @@
+// Name: Nikola Prusac Manahy
+// Student ID: C00309098
+
 #pragma once
 #include <iostream>
 
@@ -44,16 +47,16 @@ bool isAPalindrome(int testNumber)
 bool isAPrimeNumber(int numbertoTest)
 {
 	if (numbertoTest <= 1)
-	return false;
+		return false;
 
-	for (int index = 2; index <= numbertoTest; index++)
+	for (int index = 2; index <= numbertoTest / 2; index++)
 	{
 		if (numbertoTest % index == 0)
 		{
 			return false;
 		}
-		return true;
 	}
+	return true; 
 }
 int input5CharsConvertToInt()
 {
@@ -63,8 +66,12 @@ int input5CharsConvertToInt()
 	{
 		std::cin >> inputChar;
 		//check if its a digit.
-		//do something
+		if (inputChar < '0' || inputChar > '9')
+		{
+			return 0;
+		}
 
+		returnInt = returnInt * 10 + (inputChar - '0');
 	}
 	return returnInt;
 }
@@ -84,11 +91,31 @@ int convertBinarytoDecimal(int binaryNumber)
 }
 void drawRightAngledTriangle()
 {
-
+	for (int index = 1; index <= 4; index++)
+	{
+		for (int j = 0; j < index; j++)
+		{
+			std::cout << "A";
+		}
+		std::cout << std::endl;
+	}
 }
 void drawIsocelesTriangle()
 {
+	int row = 1;
+	for (int i = 0; i < 7; i++)
+	{
+		for (int j = 0; j < row; j++)
+		{
+			std::cout << 'A';
+		}
+		std::cout << std::endl;
 
+		if (i < 3)
+			row++;
+		else
+			row--;
+	}
 }
 void drawIsocelesTriangle2()
 {
@@ -97,7 +124,12 @@ void drawIsocelesTriangle2()
 
 int find(int size, int arr[], int toFind)
 {
-	return -1;
+	for (int index = 0; index < size; index++)
+	{
+		if (arr[index] == toFind)
+			return index;
+	}
+	return -1;           
 }
 int find2ndLargest(int size, int arr[])
 {

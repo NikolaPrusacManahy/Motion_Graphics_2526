@@ -1,5 +1,7 @@
 #include "function.h"
 // Test for Questions 1 to 8
+// Name: Nikola Prusac Manahy
+// Student ID: C00309098
 int main()
 {
 	std::cout << "Leapyear" << std::endl;
