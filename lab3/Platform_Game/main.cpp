@@ -43,6 +43,14 @@ public:
 	bool crumbleTriggered[numRows][numCols];
 	static const int CRUMBLE_DELAY = 30;
 
+	// helping
+	// 0 - black (nothing)
+	// 1 - red - platform
+	// 2 - Blue - Obstacle = dead
+	// 3 - Green - goal tile = win
+	// 4 - Yellow - jump tile (jump boost)
+	// 5 - Magenta - crumbing tile
+
 	int levelData[numRows][numCols] =
 	{
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
