@@ -62,7 +62,7 @@ public:
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,1,0,0,0,0,5,5,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -89,7 +89,9 @@ public:
 	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,3,0,0 } };
+	{ 0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,3 } };
+
+	int originalLevelData[numRows][numCols];
 
 	sf::RectangleShape level[numRows][numCols];
 
@@ -97,6 +99,14 @@ public:
 	{
 
 		window.create(sf::VideoMode({ 800, 600 }), "Endless Runner Game");
+
+		for (int row = 0; row < numRows; row++)
+		{
+			for (int col = 0; col < numCols; col++)
+			{
+				originalLevelData[row][col] = levelData[row][col];
+			}
+		}
 	}
 	void init()
 	{
@@ -104,6 +114,14 @@ public:
 		velocityY = 0;
 		gravity = 0.3;
 		levelComplete = false;
+
+		for (int row = 0; row < numRows; row++)
+		{
+			for (int col = 0; col < numCols; col++)
+			{
+				levelData[row][col] = originalLevelData[row][col];
+			}
+		}
 
 		view = window.getDefaultView();
 		playerShape.setSize(sf::Vector2f(20, 20));
