@@ -19,6 +19,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <time.h> 
+#include <optional>
 class Game
 {
 public:
@@ -27,13 +28,11 @@ public:
 	sf::View view;
 	float randomNum;
 
-
-	sf::RectangleShape playerShape;
-
+	sf::Texture m_playerTextures;
+	std::optional<sf::Sprite> m_playerSprite;
 
 	float velocityX = 0, velocityY = 0, gravity = 0.3;
 	bool levelComplete = false;
-
 
 
 
@@ -59,45 +58,45 @@ public:
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2,2 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,1,0,0,0,0,5,5,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0 },
-	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,4,1,1,1,1,0,1,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,4,1,1,1,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0 },
-	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,3 } };
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3 } };
 
 	int originalLevelData[numRows][numCols];
 
@@ -118,6 +117,13 @@ public:
 	}
 	void init()
 	{
+		if (!m_playerTextures.loadFromFile("images/running.jpg"))
+		{
+		}
+		m_playerSprite.emplace(m_playerTextures);
+		m_playerSprite->setTextureRect(sf::IntRect({ 0,0 }, { 32,62 }));
+		m_playerSprite->setPosition(sf::Vector2f{ 160,500 });
+
 		velocityX = 0;
 		velocityY = 0;
 		gravity = 0.3;
@@ -132,8 +138,8 @@ public:
 		}
 
 		view = window.getDefaultView();
-		playerShape.setSize(sf::Vector2f(20, 20));
-		playerShape.setPosition(sf::Vector2f(160, 500));
+		//playerShape.setSize(sf::Vector2f(20, 20));
+		//playerShape.setPosition(sf::Vector2f(160, 500));
 
 		for (int row = 0; row < numRows; row++)
 		{
@@ -268,9 +274,7 @@ public:
 				}
 
 				velocityY = velocityY + gravity;
-				playerShape.move(sf::Vector2f(0, velocityY));
-
-
+				m_playerSprite->move(sf::Vector2f(0, velocityY));
 				gravity = 0.6;
 
 				for (int row = 0; row < numRows; row++)
@@ -281,7 +285,7 @@ public:
 
 						if (tile == 3)
 						{
-							if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+							if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 							{
 								levelComplete = true;
 								break;
@@ -290,7 +294,7 @@ public:
 
 						if (tile == 2)
 						{
-							if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+							if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 							{
 								init();
 							}
@@ -300,14 +304,14 @@ public:
 						{
 							if (velocityY >= 0)
 							{
-								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+								if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
-									if (playerShape.getPosition().y < level[row][col].getPosition().y)
+									if (m_playerSprite->getPosition().y < level[row][col].getPosition().y)
 									{
 										gravity = 0;
 										velocityY = 0;
-										playerShape.setPosition(sf::Vector2f(playerShape.getPosition().x, level[row][col].getPosition().y));
-										playerShape.move(sf::Vector2f(0, -playerShape.getGlobalBounds().size.y));
+										m_playerSprite->setPosition(sf::Vector2f(m_playerSprite->getPosition().x, level[row][col].getPosition().y));
+										m_playerSprite->move(sf::Vector2f(0, -m_playerSprite->getGlobalBounds().size.y));
 
 										if (tile == 5 && !crumbleTriggered[row][col])
 										{
@@ -324,7 +328,7 @@ public:
 							}
 							if (velocityY < 0)
 							{
-								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+								if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
 									init();
 								}
@@ -335,14 +339,14 @@ public:
 						{
 							if (velocityY >= 0)
 							{
-								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+								if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
-									if (playerShape.getPosition().y < level[row][col].getPosition().y)
+									if (m_playerSprite->getPosition().y < level[row][col].getPosition().y)
 									{
 										velocityY = -18.0;
 										gravity = 0.6;
-										playerShape.setPosition(sf::Vector2f(playerShape.getPosition().x, level[row][col].getPosition().y));
-										playerShape.move(sf::Vector2f(0, -playerShape.getGlobalBounds().size.y));
+										m_playerSprite->setPosition(sf::Vector2f(m_playerSprite->getPosition().x, level[row][col].getPosition().y));
+										m_playerSprite->move(sf::Vector2f(0, -m_playerSprite->getGlobalBounds().size.y));
 										break;
 									}
 									else
@@ -353,7 +357,7 @@ public:
 							}
 							if (velocityY < 0)
 							{
-								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+								if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
 									init();
 								}
@@ -363,12 +367,13 @@ public:
 					if (levelComplete) break;
 				}
 
-				if (playerShape.getPosition().y > 600)
+				if (m_playerSprite->getPosition().y > 600)
 				{
 					init();
 				}
 
 				window.clear();
+				
 
 				for (int row = 0; row < numRows; row++)
 				{
@@ -378,7 +383,7 @@ public:
 
 					}
 				}
-				window.draw(playerShape);
+				window.draw(*m_playerSprite);
 
 
 				window.display();
