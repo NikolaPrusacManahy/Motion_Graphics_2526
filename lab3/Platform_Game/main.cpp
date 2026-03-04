@@ -32,18 +32,23 @@ public:
 
 
 	float velocityX = 0, velocityY = 0, gravity = 0.3;
+	bool levelComplete = false;
 
 
 
 
 	static const int numRows = 45;
 	static const int numCols = 20;
+	int crumbleTimers[numRows][numCols];
+	bool crumbleTriggered[numRows][numCols];
+	static const int CRUMBLE_DELAY = 30;
+
 	int levelData[numRows][numCols] =
 	{
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1 },
@@ -51,15 +56,15 @@ public:
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,1,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,1,0,0,0,0,5,5,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -67,16 +72,16 @@ public:
 	{ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0 },
 	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,4,1,1,1,1,0,1,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -95,6 +100,10 @@ public:
 	}
 	void init()
 	{
+		velocityX = 0;
+		velocityY = 0;
+		gravity = 0.3;
+		levelComplete = false;
 
 		view = window.getDefaultView();
 		playerShape.setSize(sf::Vector2f(20, 20));
@@ -105,33 +114,36 @@ public:
 			for (int col = 0; col < numCols; col++)
 			{
 
-				if (levelData[row][col] == 1)
-				{
+				level[row][col].setSize(sf::Vector2f(70, 30));
+				level[row][col].setPosition(sf::Vector2f(row * 70, col * 30));
 
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(sf::Vector2f(row * 70, col * 30));
-					level[row][col].setFillColor(sf::Color::Red);
-				}
-				if (levelData[row][col] == 0)
-				{
+				crumbleTimers[row][col] = CRUMBLE_DELAY;
+				crumbleTriggered[row][col] = false;
 
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(sf::Vector2f(row * 70, col * 30));
+				switch (levelData[row][col])
+				{
+				case 0:
 					level[row][col].setFillColor(sf::Color::Black);
-				}
-				if (levelData[row][col] == 2)
-				{
-					level[row][col].setSize(sf::Vector2f(70, 30));
-					level[row][col].setPosition(sf::Vector2f(row * 70, col * 30));
-
+					break;
+				case 1:
+					level[row][col].setFillColor(sf::Color::Red);
+					break;
+				case 2:
 					level[row][col].setFillColor(sf::Color::Blue);
-
+					break;
+				case 3:
+					level[row][col].setFillColor(sf::Color::Green);
+					break;
+				case 4:
+					level[row][col].setFillColor(sf::Color::Yellow);
+					break;
+				case 5:
+					level[row][col].setFillColor(sf::Color::Magenta);
+					break;
 				}
-
 			}
 			std::cout << std::endl;
 		}
-
 	}
 	void run()
 	{
@@ -179,6 +191,31 @@ public:
 						level[row][col].move(sf::Vector2f(-3.7, 0));
 					}
 
+				}
+
+				for (int row = 0; row < numRows; row++)
+				{
+					for (int col = 0; col < numCols; col++)
+					{
+						if (levelData[row][col] == 5 && crumbleTriggered[row][col])
+						{
+							crumbleTimers[row][col]--;
+
+							if (crumbleTimers[row][col] > 0)
+							{
+								if (crumbleTimers[row][col] % 4 < 2)
+									level[row][col].setFillColor(sf::Color::Magenta);
+								else
+									level[row][col].setFillColor(sf::Color(100, 0, 100));
+							}
+
+							if (crumbleTimers[row][col] <= 0)
+							{
+								level[row][col].setFillColor(sf::Color::Black);
+								levelData[row][col] = 0;
+							}
+						}
+					}
 				}
 
 
