@@ -355,6 +355,11 @@ public:
 					if (levelComplete) break;
 				}
 
+				if (playerShape.getPosition().y > 600)
+				{
+					init();
+				}
+
 				window.clear();
 
 				for (int row = 0; row < numRows; row++)
