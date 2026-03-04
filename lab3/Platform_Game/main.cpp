@@ -48,7 +48,7 @@ public:
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
-	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1 },
@@ -89,7 +89,7 @@ public:
 	{ 0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,0,0 },
 	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0 } };
+	{ 0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,3,0,0 } };
 
 	sf::RectangleShape level[numRows][numCols];
 
@@ -174,11 +174,28 @@ public:
 				{
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
 						window.close();
+
+					if (levelComplete && keyPressed->scancode == sf::Keyboard::Scancode::Space)
+					{
+						init();
+					}
 				}
 			}
 
 			timeSinceLastUpdate += clock.restart();
 
+			if (levelComplete)
+			{
+				window.clear();
+				sf::RectangleShape winBanner;
+				winBanner.setSize(sf::Vector2f(400, 80));
+				winBanner.setFillColor(sf::Color::Green);
+				winBanner.setPosition(sf::Vector2f(200, 260));
+				window.draw(winBanner);
+				window.display();
+				timeSinceLastUpdate = sf::Time::Zero;
+				continue;
+			}
 
 			if (timeSinceLastUpdate > timePerFrame)
 			{
@@ -234,11 +251,29 @@ public:
 				{
 					for (int col = 0; col < numCols; col++)
 					{
-						if (velocityY >= 0)
-						{
-							if (levelData[row][col] == 1)
-							{
+						int tile = levelData[row][col];
 
+						if (tile == 3)
+						{
+							if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+							{
+								levelComplete = true;
+								break;
+							}
+						}
+
+						if (tile == 2)
+						{
+							if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+							{
+								init();
+							}
+						}
+
+						if (tile == 1 || tile == 5)
+						{
+							if (velocityY >= 0)
+							{
 								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
 									if (playerShape.getPosition().y < level[row][col].getPosition().y)
@@ -247,42 +282,59 @@ public:
 										velocityY = 0;
 										playerShape.setPosition(sf::Vector2f(playerShape.getPosition().x, level[row][col].getPosition().y));
 										playerShape.move(sf::Vector2f(0, -playerShape.getGlobalBounds().size.y));
+
+										if (tile == 5 && !crumbleTriggered[row][col])
+										{
+											crumbleTriggered[row][col] = true;
+										}
+
 										break;
 									}
-									else {
+									else
+									{
 										init();
 									}
 								}
-
-
 							}
-
-						}
-						if (velocityY < 0)
-						{
-							if (levelData[row][col] == 1)
+							if (velocityY < 0)
 							{
 								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
 									init();
 								}
-
 							}
-
 						}
-						if (levelData[row][col] == 2)
+
+						if (tile == 4)
 						{
-							if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+							if (velocityY >= 0)
 							{
-								init();
+								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+								{
+									if (playerShape.getPosition().y < level[row][col].getPosition().y)
+									{
+										velocityY = -18.0;
+										gravity = 0.6;
+										playerShape.setPosition(sf::Vector2f(playerShape.getPosition().x, level[row][col].getPosition().y));
+										playerShape.move(sf::Vector2f(0, -playerShape.getGlobalBounds().size.y));
+										break;
+									}
+									else
+									{
+										init();
+									}
+								}
+							}
+							if (velocityY < 0)
+							{
+								if (playerShape.getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
+								{
+									init();
+								}
 							}
 						}
 					}
-				}
-
-				if (playerShape.getPosition().y > 600)
-				{
-					init();
+					if (levelComplete) break;
 				}
 
 				window.clear();
