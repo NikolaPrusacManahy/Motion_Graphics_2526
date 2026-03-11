@@ -20,6 +20,67 @@
 #include <iostream>
 #include <time.h> 
 #include <optional>
+
+class Particle
+{
+public:
+	int timetoLive;
+	sf::Vector2f velocity;
+	sf::RectangleShape shape;
+
+	void Draw(sf::RenderWindow& win)
+	{
+		if (timetoLive > 0)
+			win.draw(shape);
+	}
+	void Update()
+	{
+		if (timetoLive > 0)
+		{
+			shape.move(velocity);
+			timetoLive--;
+		}
+	}
+	Particle() {}
+	Particle(sf::Vector2f pos, sf::Vector2f vel, sf::Color col)
+	{
+		shape.setSize(sf::Vector2f(6, 6));
+		shape.setPosition(pos);
+		shape.setFillColor(col);
+		velocity = vel;
+		timetoLive = rand() % 150;
+	}
+};
+
+#define maxParticles 50
+class ParticleSystem
+{
+public:
+	Particle particles[maxParticles];
+	sf::Vector2f position;
+
+	void Initialise(sf::Vector2f pos, sf::Color col, float spread)
+	{
+		position = pos;
+		for (int i = 0; i < maxParticles; i++)
+			particles[i] = Particle(position,
+				sf::Vector2f(rand() / double(RAND_MAX) * spread - spread / 2,
+					rand() / double(RAND_MAX) * spread - spread / 2),
+				col);
+	}
+	void Update()
+	{
+		for (int i = 0; i < maxParticles; i++)
+			particles[i].Update();
+	}
+	void Draw(sf::RenderWindow& win)
+	{
+		for (int i = 0; i < maxParticles; i++)
+			particles[i].Draw(win);
+	}
+	ParticleSystem() {}
+};
+
 class Game
 {
 public:
@@ -45,6 +106,9 @@ public:
 	static const int CRUMBLE_DELAY = 30;
 
 	float lavaVelocities[numRows][numCols];
+
+	ParticleSystem m_dustParticles;   // landing
+	ParticleSystem m_deathParticles;  // death
 
 
 	// helping
@@ -141,6 +205,8 @@ public:
 	}
 	void init()
 	{
+		
+
 		if (!m_playerTextures.loadFromFile("images/running.jpg"))
 		{
 		}
@@ -152,6 +218,9 @@ public:
 		velocityY = 0;
 		gravity = 0.3;
 		levelComplete = false;
+
+		m_deathParticles.Initialise(m_playerSprite->getPosition(), sf::Color::Red, 3.0f);
+
 
 		for (int row = 0; row < numRows; row++)
 		{
@@ -363,6 +432,8 @@ public:
 										m_playerSprite->setPosition(sf::Vector2f(m_playerSprite->getPosition().x, level[row][col].getPosition().y));
 										m_playerSprite->move(sf::Vector2f(0, -m_playerSprite->getGlobalBounds().size.y));
 
+										m_dustParticles.Initialise(m_playerSprite->getPosition(), sf::Color::White, 1.0f);
+
 										if (tile == 5 && !crumbleTriggered[row][col])
 										{
 											crumbleTriggered[row][col] = true;
@@ -432,6 +503,7 @@ public:
 
 				window.clear();
 				
+				
 
 				for (int row = 0; row < numRows; row++)
 				{
@@ -441,6 +513,12 @@ public:
 							window.draw(level[row][col]);
 					}
 				}
+
+				m_dustParticles.Update();
+				m_dustParticles.Draw(window);
+				m_deathParticles.Update();
+				m_deathParticles.Draw(window);
+
 				window.draw(*m_playerSprite);
 
 
