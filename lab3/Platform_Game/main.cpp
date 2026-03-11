@@ -17,6 +17,7 @@
 #endif 
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <time.h> 
 #include <optional>
@@ -110,6 +111,9 @@ public:
 	ParticleSystem m_dustParticles;   // landing
 	ParticleSystem m_deathParticles;  // death
 
+	sf::SoundBuffer m_jumpBuffer, m_jumpPadBuffer, m_landingBuffer, m_deathBuffer, m_crumblingBuffer;
+	std::optional<sf::Sound> m_jumpSound, m_jumpPadSound, m_landingSound, m_deathSound, m_crumblingSound;
+
 
 	// helping
 	// 0 - black (nothing)
@@ -190,6 +194,22 @@ public:
 		if (m_winTex.loadFromFile("images/win.jpg"))
 		{
 		}
+
+		m_jumpBuffer.loadFromFile("audio/jump.wav");
+		m_jumpSound.emplace(m_jumpBuffer);
+
+		m_jumpPadBuffer.loadFromFile("audio/jumpPad.wav");
+		m_jumpPadSound.emplace(m_jumpPadBuffer);
+
+		m_landingBuffer.loadFromFile("audio/landing.wav");
+		m_landingSound.emplace(m_landingBuffer);
+
+		m_deathBuffer.loadFromFile("audio/death.wav");
+		m_deathSound.emplace(m_deathBuffer);
+
+		m_crumblingBuffer.loadFromFile("audio/crumbling.wav");
+		m_crumblingSound.emplace(m_crumblingBuffer);
+
 
 		for (int row = 0; row < numRows; row++)
 		{
@@ -390,6 +410,7 @@ public:
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space) && velocityY == 0)
 				{
 					velocityY = -11.8;
+					m_jumpSound->play();
 				}
 
 				velocityY = velocityY + gravity;
@@ -415,6 +436,7 @@ public:
 						{
 							if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 							{
+								m_deathSound->play();
 								init();
 							}
 						}
@@ -431,18 +453,20 @@ public:
 										velocityY = 0;
 										m_playerSprite->setPosition(sf::Vector2f(m_playerSprite->getPosition().x, level[row][col].getPosition().y));
 										m_playerSprite->move(sf::Vector2f(0, -m_playerSprite->getGlobalBounds().size.y));
-
+										m_landingSound->play();
 										m_dustParticles.Initialise(m_playerSprite->getPosition(), sf::Color::White, 1.0f);
 
 										if (tile == 5 && !crumbleTriggered[row][col])
 										{
 											crumbleTriggered[row][col] = true;
+											m_crumblingSound->play();
 										}
 
 										break;
 									}
 									else
 									{
+										m_deathSound->play();
 										init();
 									}
 								}
@@ -451,6 +475,7 @@ public:
 							{
 								if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
+									m_deathSound->play();
 									init();
 								}
 							}
@@ -468,10 +493,12 @@ public:
 										gravity = 0.6;
 										m_playerSprite->setPosition(sf::Vector2f(m_playerSprite->getPosition().x, level[row][col].getPosition().y));
 										m_playerSprite->move(sf::Vector2f(0, -m_playerSprite->getGlobalBounds().size.y));
+										m_jumpPadSound->play();
 										break;
 									}
 									else
 									{
+										m_deathSound->play();
 										init();
 									}
 								}
@@ -480,6 +507,7 @@ public:
 							{
 								if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 								{
+									m_deathSound->play();
 									init();
 								}
 							}
@@ -489,6 +517,7 @@ public:
 						{
 							if (m_playerSprite->getGlobalBounds().findIntersection(level[row][col].getGlobalBounds()))
 							{
+								m_deathSound->play();
 								init();
 							}
 						}
@@ -498,6 +527,7 @@ public:
 
 				if (m_playerSprite->getPosition().y > 600)
 				{
+					m_deathSound->play();
 					init();
 				}
 
